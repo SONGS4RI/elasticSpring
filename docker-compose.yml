@@ -38,8 +38,43 @@ services:
     networks:
       - elastic
 
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.8.1
+    container_name: metricbeat
+    user: root
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    environment:
+      - setup.kibana.host=kibana:5601
+      - output.elasticsearch.hosts=["http://es01:9200"]
+    networks:
+      - elastic
+    depends_on:
+      - es01
+      - kibana
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - elastic
+    depends_on:
+      - es01
+
 volumes:
   data01:
+    driver: local
+  grafana_data:
     driver: local
 
 networks:
