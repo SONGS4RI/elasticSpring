@@ -12,12 +12,13 @@ import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.index.reindex.BulkByScrollResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/movie")
 class MovieController(val movieService: MovieService) {
-    @PostMapping("")
+    @PutMapping("")
     fun index(@RequestBody movieDto: MovieRequestDto,
                  @RequestParam(required = false) id: String?): ResponseEntity<IndexResponse> {
         val movie = Movie.from(movieDto, id)
@@ -26,8 +27,8 @@ class MovieController(val movieService: MovieService) {
     }
 
     // bulk
-    @PostMapping("/bulk/index")
-    fun bulkIndex(@RequestBody @Valid movieDtoList: List<MovieBulkRequestDto>): ResponseEntity<BulkResponse> {
+    @PutMapping("/bulk/index")
+    fun bulkIndex(@RequestBody @Validated movieDtoList: List<MovieBulkRequestDto>): ResponseEntity<BulkResponse> {
         val movieList : MutableList<Movie> = mutableListOf()
         for (movieDto in movieDtoList) {
             movieList.add(Movie.from(movieDto))

@@ -1,10 +1,10 @@
 package elastic.elasticSpring.movie.dto
 
-import org.jetbrains.annotations.NotNull
+import jakarta.validation.constraints.NotBlank
 
 data class MovieAddGenreRequestDto (
-    @NotNull
+    @field: NotBlank
     val movieNm : String,
-    @NotNull
+    @field: NotBlank
     val genre : String
 )

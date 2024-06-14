@@ -24,12 +24,14 @@ class MovieService(
     private val restHighLevelClient: RestHighLevelClient,
     private val  objectMapper: ObjectMapper
 ) {
-    private val index = "movie_search"
+    companion object {
+        private const val index = "movie_search"
+    }
 
     fun add(movie: Movie): IndexResponse {
         val indexRequest = IndexRequest(index)
             .source(objectMapper.writeValueAsString(movie), XContentType.JSON)
-        if (!movie.id.isNullOrEmpty()) {
+        if (!movie.id.isNullOrBlank()) {
             indexRequest.id(movie.id)
         }
         return restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT)
