@@ -3,7 +3,8 @@ package elastic.elasticSpring.movie.dto
 import elastic.elasticSpring.movie.document.Company
 import elastic.elasticSpring.movie.document.Director
 
-data class MovieRequestDto(
+data class MovieBulkRequestDto(
+    val id: String?,
     val movieCd: String?,
     val movieNm:  String?,
     val movieNmEn: String?,

@@ -23,4 +23,4 @@
     # 스냅샷 복구
     POST _snapshot/search_example/movie-search/_restore
     ```
-3. Postman으로 문서에 대한 작업을 수행하고 kibana에서 확인
+3. Postman으로 문서에 대한 작업을 수행하고 kibana에서 확인하면 됩니다.

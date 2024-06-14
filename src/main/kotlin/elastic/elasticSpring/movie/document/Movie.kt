@@ -1,52 +1,73 @@
 package elastic.elasticSpring.movie.document
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import elastic.elasticSpring.movie.dto.MovieBulkRequestDto
 import elastic.elasticSpring.movie.dto.MovieRequestDto
 
 data class Movie(
+    val id: String?,
     @JsonProperty("movieCd")
-    val movieCd: String,
+    val movieCd: String?,
     @JsonProperty("movieNm")
-    val movieNm:  String = "",
+    val movieNm:  String?,
     @JsonProperty("movieNmEn")
-    val movieNmEn: String = "",
+    val movieNmEn: String?,
     @JsonProperty("prdtYear")
-    val prdtYear: String = "",
+    val prdtYear: String?,
     @JsonProperty("openDt")
-    val openDt: String = "",
+    val openDt: String?,
     @JsonProperty("typeNm")
-    val typeNm: String = "",
+    val typeNm: String?,
     @JsonProperty("prdtStatNm")
-    val prdtStatNm: String = "",
+    val prdtStatNm: String?,
     @JsonProperty("nationAlt")
-    val nationAlt: String = "",
+    val nationAlt: String?,
     @JsonProperty("genreAlt")
-    val genreAlt: List<String> = mutableListOf(),
+    val genreAlt: List<String>,
     @JsonProperty("repNationNm")
-    val repNationNm: String = "",
+    val repNationNm: String?,
     @JsonProperty("repGenreNm")
-    val repGenreNm: String = "",
+    val repGenreNm: String?,
     @JsonProperty("directors")
-    val directors: List<Director> = mutableListOf(),
+    val directors: List<Director>?,
     @JsonProperty("companies")
-    val companies: List<Company> = mutableListOf()
+    val companies: List<Company>?
 ) {
     companion object {
-        fun from(movieRequestDto: MovieRequestDto): Movie {
+        fun from(movieRequestDto: MovieRequestDto, id: String?): Movie {
             return Movie(
-                movieCd = movieRequestDto.movieCd,
-                movieNm = movieRequestDto.movieNm,
-                movieNmEn = movieRequestDto.movieNmEn,
-                prdtYear = movieRequestDto.prdtYear,
-                openDt = movieRequestDto.openDt,
-                typeNm = movieRequestDto.typeNm,
-                prdtStatNm = movieRequestDto.prdtStatNm,
-                nationAlt = movieRequestDto.nationAlt,
-                genreAlt = movieRequestDto.genreAlt,
-                repNationNm = movieRequestDto.repNationNm,
-                repGenreNm = movieRequestDto.repGenreNm,
-                directors = movieRequestDto.directors.map { Director(it.peopleNm) },
-                companies = movieRequestDto.companies.map { Company(it.companyCd, it.companyNm) }
+                id = id,
+                movieCd = movieRequestDto.movieCd ?: "",
+                movieNm = movieRequestDto.movieNm ?: "",
+                movieNmEn = movieRequestDto.movieNmEn ?: "",
+                prdtYear = movieRequestDto.prdtYear ?: "",
+                openDt = movieRequestDto.openDt ?: "",
+                typeNm = movieRequestDto.typeNm ?: "",
+                prdtStatNm = movieRequestDto.prdtStatNm ?: "",
+                nationAlt = movieRequestDto.nationAlt ?: "",
+                genreAlt = movieRequestDto.genreAlt  ?: mutableListOf(),
+                repNationNm = movieRequestDto.repNationNm  ?: "",
+                repGenreNm = movieRequestDto.repGenreNm  ?: "",
+                directors = movieRequestDto.directors?.map { Director(it.peopleNm) } ?: mutableListOf(),
+                companies = movieRequestDto.companies?.map { Company(it.companyCd, it.companyNm) } ?: mutableListOf(),
+            )
+        }
+        fun from(movieBulkRequestDto: MovieBulkRequestDto): Movie {
+            return Movie(
+                id = movieBulkRequestDto.id,
+                movieCd = movieBulkRequestDto.movieCd ?: "",
+                movieNm = movieBulkRequestDto.movieNm ?: "",
+                movieNmEn = movieBulkRequestDto.movieNmEn ?: "",
+                prdtYear = movieBulkRequestDto.prdtYear ?: "",
+                openDt = movieBulkRequestDto.openDt ?: "",
+                typeNm = movieBulkRequestDto.typeNm ?: "",
+                prdtStatNm = movieBulkRequestDto.prdtStatNm ?: "",
+                nationAlt = movieBulkRequestDto.nationAlt ?: "",
+                genreAlt = movieBulkRequestDto.genreAlt  ?: mutableListOf(),
+                repNationNm = movieBulkRequestDto.repNationNm  ?: "",
+                repGenreNm = movieBulkRequestDto.repGenreNm  ?: "",
+                directors = movieBulkRequestDto.directors?.map { Director(it.peopleNm) } ?: mutableListOf(),
+                companies = movieBulkRequestDto.companies?.map { Company(it.companyCd, it.companyNm) } ?: mutableListOf(),
             )
         }
     }
