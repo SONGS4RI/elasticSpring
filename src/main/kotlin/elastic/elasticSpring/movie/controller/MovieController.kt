@@ -1,10 +1,15 @@
 package elastic.elasticSpring.movie.controller
 
 import elastic.elasticSpring.movie.document.Movie
+import elastic.elasticSpring.movie.dto.MovieAddGenreRequestDto
 import elastic.elasticSpring.movie.dto.MovieRequestDto
-import elastic.elasticSpring.movie.dto.ElasticsearchResponseDto
+import elastic.elasticSpring.movie.dto.MovieBulkRequestDto
+import elastic.elasticSpring.movie.dto.MovieDeleteByNameRequestDto
 import elastic.elasticSpring.movie.service.MovieService
 import jakarta.validation.Valid
+import org.elasticsearch.action.bulk.BulkResponse
+import org.elasticsearch.action.index.IndexResponse
+import org.elasticsearch.index.reindex.BulkByScrollResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,18 +18,35 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/movie")
 class MovieController(val movieService: MovieService) {
     @PostMapping("")
-    fun addMovie(@RequestBody movieDto: MovieRequestDto,
-                 @RequestParam(required = false) id: String?): ResponseEntity<ElasticsearchResponseDto> {
-        val movie = Movie.from(movieDto)
-        val result = movieService.addMovie(movie, id)
-        val response = ElasticsearchResponseDto.from(result)
-        return ResponseEntity(response, HttpStatus.valueOf(result.status().status))
+    fun index(@RequestBody movieDto: MovieRequestDto,
+                 @RequestParam(required = false) id: String?): ResponseEntity<IndexResponse> {
+        val movie = Movie.from(movieDto, id)
+        val result = movieService.add(movie)
+        return ResponseEntity(result, HttpStatus.valueOf(result.status().status))
     }
 
-    @PostMapping("/bulk")
-    fun bulkMovie(@RequestBody @Valid movieDtoList: List<MovieRequestDto>): ResponseEntity<List<ElasticsearchResponseDto>> {
-        return ResponseEntity(HttpStatus.OK)
+    // bulk
+    @PostMapping("/bulk/index")
+    fun bulkIndex(@RequestBody @Valid movieDtoList: List<MovieBulkRequestDto>): ResponseEntity<BulkResponse> {
+        val movieList : MutableList<Movie> = mutableListOf()
+        for (movieDto in movieDtoList) {
+            movieList.add(Movie.from(movieDto))
+        }
+        val result = movieService.bulkIndex(movieList)
+        return ResponseEntity(result, HttpStatus.valueOf(result.status().status))
     }
 
-    //update_by_query
+    // update by query
+    @PostMapping("/genre")
+    fun addGenre(@RequestBody @Valid movieDto: MovieAddGenreRequestDto): ResponseEntity<BulkByScrollResponse> {
+        val result = movieService.addGenre(movieDto)
+        return ResponseEntity(result, HttpStatus.OK)
+    }
+
+    // delete by query
+    @DeleteMapping("")
+    fun deleteByMovieName(@RequestBody @Valid movieDto: MovieDeleteByNameRequestDto): ResponseEntity<BulkByScrollResponse> {
+        val result = movieService.deleteByMovieName(movieDto)
+        return ResponseEntity(result, HttpStatus.OK)
+    }
 }
